@@ -45,7 +45,7 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
-
+temp/
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
 
@@ -140,5 +140,8 @@ dist
 
 # SvelteKit build / generate output
 .svelte-kit
+
+# MacOS Shit File
+.DS_Store
 
 # End of https://www.toptal.com/developers/gitignore/api/node
