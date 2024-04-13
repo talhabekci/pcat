@@ -1,8 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const fileUpload = require('express-fileupload');
+const methodOverride = require('method-override');
+const swal = require('sweetalert');
 const ejs = require('ejs');
 const path = require('path');
-const Photo = require('./models/Photo');
+const photoController = require('./controllers/photoController');
+const pageController = require('./controllers/pageController');
 
 const app = express();
 
@@ -16,35 +20,22 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(fileUpload());
+app.use(methodOverride('_method', {
+    methods: ['POST', 'GET']
+}));
 
 //Routes
-app.get('/', async (req, res) => {
-    const photos = await Photo.find();
-    res.render('index', {
-        photos
-    });
-});
+app.get('/', photoController.getAllPhotos);
+app.get('/photo/:id', photoController.getPhoto);
+app.post('/photos', photoController.addPhoto);
+app.put('/photos/edit/:id', photoController.updatePhoto);
+app.delete('/photos/delete/:id', photoController.deletePhoto);
 
-app.get('/about', (req, res) => {
-    res.render('about');
-});
+app.get('/about', pageController.getAboutPage);
+app.get('/add', pageController.getAddPage);
+app.get('/photos/edit/:id', pageController.getEditPage);
 
-app.get('/add', (req, res) => {
-    res.render('add');
-});
-
-app.post('/photos', (req, res) => {
-    Photo.create({
-        title: req.body.title,
-        description: req.body.description,
-        image: req.body.image,
-    }).then((data) => {
-        console.log(data);
-        res.redirect('/');
-    }).catch((err) => {
-        console.log(err);
-    });
-});
 
 const port = 3000;
 app.listen(port, () => {
