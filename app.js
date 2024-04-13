@@ -7,11 +7,18 @@ const ejs = require('ejs');
 const path = require('path');
 const photoController = require('./controllers/photoController');
 const pageController = require('./controllers/pageController');
+require('dotenv').config();
 
 const app = express();
 
 //connect db
-mongoose.connect('mongodb://localhost/pcat-test-db');
+mongoose.connect(process.env.MONGO_DB_URI)
+    .then(() => {
+        console.log('DB Connected');
+    })
+    .catch((err) => {
+        console.log('DB Connection Error: ' + err);
+    });
 
 //Template Engine
 app.set('view engine', 'ejs');
@@ -37,7 +44,7 @@ app.get('/add', pageController.getAddPage);
 app.get('/photos/edit/:id', pageController.getEditPage);
 
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server started at port ${port}`);
 });
